@@ -9,7 +9,7 @@ To visit the app, one can visit http://mytodoapp.westeurope.cloudapp.azure.com/
 ## Components
 
 ```plaintext
-ansible-playbook/
+ansible-demo/
 ├── inventory.yaml           # Ansible inventory, defined host
 ├── playbook.yaml            # Main Playbook, the file containing deployment roles
 ├── secrets.yaml             # Save sensitive data.
