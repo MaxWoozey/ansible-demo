@@ -1,0 +1,15 @@
+- name: Deploy Todo application to Kubernetes
+  hosts: all
+  vars_files:
+    - secrets.yaml
+  vars:
+    namespace: "{{ hostvars[inventory_hostname]['namespace'] }}"
+    replicas: "{{ hostvars[inventory_hostname]['replicas'] }}"
+    labels: "{{ hostvars[inventory_hostname]['labels'] }}"
+  roles:
+    - kubernetes
+    - docker
+    - mysql
+    - todo
+    - ingress
+

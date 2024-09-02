@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: todo-app
+  namespace: {{ namespace }}
+spec:
+  replicas: {{ replicas }}
+  selector:
+    matchLabels:
+      {{ labels | to_nice_yaml(indent=6) }}
+  template:
+    metadata:
+      labels:
+        {{ labels | to_nice_yaml(indent=8) }}
+    spec:
+      containers:
+        - name: todo-app
+          image: maxxae/todo-app:latest
+          ports:
+            - containerPort: 3000
+          env:
+            - name: MYSQL_HOST
+              value: "mysql"
+            - name: MYSQL_USER
+              value: "{{ db_user }}"
+            - name: MYSQL_PASSWORD
+              value: "{{ db_password }}"
+            - name: MYSQL_DB
+              value: "todo_db"
+          command: ["/bin/sh", "-c", "until nc -z mysql 3306; do echo waiting for MySQL; sleep 5; done; node src/index.js"]

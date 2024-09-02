@@ -1,0 +1,51 @@
+- name: Create namespace for the application
+  shell: |
+    microk8s kubectl create namespace {{ namespace }} --dry-run=client -o yaml | microk8s kubectl apply -f -
+
+- name: Create PersistentVolume for MySQL
+  template:
+    src: mysql-pv.yaml.j2
+    dest: /tmp/mysql-pv.yaml
+
+- name: Apply PersistentVolume for MySQL
+  shell: |
+    microk8s kubectl apply -f /tmp/mysql-pv.yaml -n {{ namespace }}
+
+- name: Create PersistentVolumeClaim for MySQL
+  template:
+    src: mysql-pvc.yaml.j2
+    dest: /tmp/mysql-pvc.yaml
+
+- name: Apply PersistentVolumeClaim for MySQL
+  shell: |
+    microk8s kubectl apply -f /tmp/mysql-pvc.yaml -n {{ namespace }}
+
+- name: Deploy MySQL application
+  template:
+    src: mysql-deployment.yaml.j2
+    dest: /tmp/mysql-deployment.yaml
+
+- name: Apply MySQL deployment
+  shell: |
+    microk8s kubectl apply -f /tmp/mysql-deployment.yaml -n {{ namespace }}
+
+- name: Deploy MySQL service
+  template:
+    src: mysql-service.yaml.j2
+    dest: /tmp/mysql-service.yaml
+
+- name: Apply MySQL service
+  shell: |
+    microk8s kubectl apply -f /tmp/mysql-service.yaml -n {{ namespace }}
+
+- name: Wait for MySQL Pod to be ready
+  shell: |
+    microk8s kubectl wait --for=condition=ready pod -l app=mysql -n {{ namespace }} --timeout=120s
+
+- name: Create database for the application
+  shell: |
+    microk8s kubectl exec -n {{ namespace }} $(microk8s kubectl get pod -l app=mysql -n {{ namespace }} -o jsonpath='{.items[0].metadata.name}') -- \
+    mysql -u {{ db_user }} -p'{{ db_password }}' -e "CREATE DATABASE IF NOT EXISTS {{ db_name }};"
+  vars:
+    db_name: "todo_db"
+

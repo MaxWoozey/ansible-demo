@@ -1,0 +1,17 @@
+- name: Deploy Todo application
+  template:
+    src: todo-deployment.yaml.j2
+    dest: /tmp/todo-deployment.yaml
+
+- name: Apply the deployment file
+  shell: |
+    microk8s kubectl apply -f /tmp/todo-deployment.yaml -n {{ namespace }}
+
+- name: Deploy Todo service
+  template:
+    src: todo-service.yaml.j2
+    dest: /tmp/todo-service.yaml
+
+- name: Apply the service file
+  shell: |
+    microk8s kubectl apply -f /tmp/todo-service.yaml -n {{ namespace }}

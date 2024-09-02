@@ -1,0 +1,13 @@
+- name: Install Docker
+  apt:
+    name: docker.io
+    state: present
+  become: yes
+
+- name: Pull Docker image
+  docker_image:
+    name: docker.io/maxxae/todo-app
+    tag: latest
+    source: pull
+  become: yes
+
