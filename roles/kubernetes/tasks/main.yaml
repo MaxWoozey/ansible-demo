@@ -11,10 +11,11 @@
     groups: microk8s
     append: yes
 
-- name: Allow iptables to see bridged traffic
-  shell: |
-    sudo iptables -P FORWARD ACCEPT
+- name: Set default policy for FORWARD chain to ACCEPT
   become: yes
+  iptables:
+    chain: FORWARD
+    policy: ACCEPT
 
 - name: Enable necessary MicroK8s add-ons
   shell: |
