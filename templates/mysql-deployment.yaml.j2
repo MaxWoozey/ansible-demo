@@ -20,7 +20,7 @@ spec:
         image: mysql:5.7
         env:
         - name: MYSQL_ROOT_PASSWORD
-          value: "023456"
+          value: "{{ db_password }}"
         volumeMounts:
         - mountPath: /var/lib/mysql
           name: mysql-persistent-storage
