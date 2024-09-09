@@ -14,6 +14,7 @@
 - name: Allow iptables to see bridged traffic
   shell: |
     sudo iptables -P FORWARD ACCEPT
+  become: yes
 
 - name: Enable necessary MicroK8s add-ons
   shell: |
